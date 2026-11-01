@@ -122,11 +122,42 @@ export const mockEarthquakes = [
   }
 ];
 
-export const mockKpiData = {
-  totalCount: mockEarthquakes.length,
-  totalChange: '+12.5%',
-  maxMagnitude: Math.max(...mockEarthquakes.map(e => e.magnitude)).toFixed(1),
-  magChange: '+0.4',
-  avgDepth: (mockEarthquakes.reduce((acc, e) => acc + e.depth, 0) / mockEarthquakes.length).toFixed(1),
-  depthChange: '-2.1 км'
-};
+/**
+ * Computes dashboard KPI indicators dynamically from event dataset
+ * @param {Array} events - Earthquake event objects
+ * @returns {Array<{id: string, title: string, value: string, change: string, isPositive: boolean, description: string}>}
+ */
+export function getKpiMetrics(events = mockEarthquakes) {
+  const total = events.length;
+  const strongCount = events.filter((e) => e.magnitude >= 6.0).length;
+  const avgMag = total > 0
+    ? (events.reduce((acc, e) => acc + e.magnitude, 0) / total).toFixed(1)
+    : '0.0';
+
+  return [
+    {
+      id: 'kpi-total',
+      title: 'Total earthquakes',
+      value: String(total),
+      change: '+12.5%',
+      isPositive: true,
+      description: 'Recorded sample events'
+    },
+    {
+      id: 'kpi-strong',
+      title: 'Strong earthquakes',
+      value: String(strongCount),
+      change: '+2.1%',
+      isPositive: true,
+      description: 'Magnitude >= 6.0'
+    },
+    {
+      id: 'kpi-avg',
+      title: 'Average magnitude',
+      value: String(avgMag),
+      change: '-0.4%',
+      isPositive: false,
+      description: 'Sample mean magnitude'
+    }
+  ];
+}

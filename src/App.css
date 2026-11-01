@@ -420,7 +420,7 @@ body {
 /* ==========================================================================
    Filtered List & Table
    ========================================================================== */
-.filter-header {
+.widget-header, .filter-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;

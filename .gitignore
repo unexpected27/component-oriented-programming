@@ -1,3 +1,6 @@
+agy/
+AGENTS.md
+
 # Logs
 logs
 *.log
@@ -14,6 +17,7 @@ dist-ssr
 
 # Editor directories and files
 .vscode/*
+.openidea
 !.vscode/extensions.json
 .idea
 .DS_Store

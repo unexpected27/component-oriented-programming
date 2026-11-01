@@ -1,74 +1,43 @@
-import { useState } from 'react';
-
 /**
- * Display Settings / Toggle Component
- * Manages display preferences using compact segmented controls.
- * Supports depth units (Kilometers / Miles) and Theme (Light / Dark).
- * Default theme: LIGHT.
+ * Toggle / SegmentedControl Component
+ * Reusable controlled component for switching between discrete modes or values.
+ * Follows Single Responsibility Principle and controlled input contract.
+ *
+ * @param {Object} props
+ * @param {string} [props.label] - Label for the setting
+ * @param {Array<{value: string, label: string}>} props.options - Available toggle choices
+ * @param {string} props.value - Currently selected value
+ * @param {(value: string) => void} props.onChange - Selection change callback
+ * @param {string} [props.ariaLabel] - Accessibility label for radiogroup
  */
-function Toggle({ onUnitChange, onThemeChange }) {
-  const [unit, setUnit] = useState('km');
-  const [theme, setTheme] = useState('light');
-
-  const handleUnitSelect = (selectedUnit) => {
-    setUnit(selectedUnit);
-    if (onUnitChange) onUnitChange(selectedUnit);
-  };
-
-  const handleThemeSelect = (selectedTheme) => {
-    setTheme(selectedTheme);
-    if (onThemeChange) onThemeChange(selectedTheme);
-  };
-
+function Toggle({ label, options = [], value, onChange, ariaLabel }) {
   return (
-    <div className="widget-card">
-      <div className="widget-header">
-        <h3 className="widget-title">Display settings</h3>
-      </div>
-      <p className="widget-description">
-        Customize measurement units and application theme.
-      </p>
-
-      <div className="settings-controls">
-        <div className="setting-group">
-          <span className="setting-label">Depth units</span>
-          <div className="segmented-control" role="radiogroup" aria-label="Depth units">
+    <div className="setting-group">
+      {label && <span className="setting-label">{label}</span>}
+      <div 
+        className="segmented-control" 
+        role="radiogroup" 
+        aria-label={ariaLabel || label || 'Toggle selection'}
+      >
+        {options.map((option) => {
+          const isActive = option.value === value;
+          return (
             <button
+              key={option.value}
               type="button"
-              className={`segmented-btn ${unit === 'km' ? 'active' : ''}`}
-              onClick={() => handleUnitSelect('km')}
+              role="radio"
+              aria-checked={isActive}
+              className={`segmented-btn ${isActive ? 'active' : ''}`}
+              onClick={() => {
+                if (!isActive && onChange) {
+                  onChange(option.value);
+                }
+              }}
             >
-              Kilometers
+              {option.label}
             </button>
-            <button
-              type="button"
-              className={`segmented-btn ${unit === 'mi' ? 'active' : ''}`}
-              onClick={() => handleUnitSelect('mi')}
-            >
-              Miles
-            </button>
-          </div>
-        </div>
-
-        <div className="setting-group">
-          <span className="setting-label">Theme</span>
-          <div className="segmented-control" role="radiogroup" aria-label="Theme">
-            <button
-              type="button"
-              className={`segmented-btn ${theme === 'light' ? 'active' : ''}`}
-              onClick={() => handleThemeSelect('light')}
-            >
-              Light
-            </button>
-            <button
-              type="button"
-              className={`segmented-btn ${theme === 'dark' ? 'active' : ''}`}
-              onClick={() => handleThemeSelect('dark')}
-            >
-              Dark
-            </button>
-          </div>
-        </div>
+          );
+        })}
       </div>
     </div>
   );

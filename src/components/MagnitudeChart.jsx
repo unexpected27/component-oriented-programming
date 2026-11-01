@@ -1,7 +1,12 @@
+import WidgetCard from './WidgetCard';
+
 /**
  * MagnitudeChart Component
- * Redesigned clean card showing earthquake distribution by magnitude.
- * Uses thin (~8px) progress bars with labels placed outside.
+ * Visualizes earthquake distribution by magnitude bracket.
+ * Uses WidgetCard container for clean composition via `children`.
+ *
+ * @param {Object} props
+ * @param {Array} props.events - Array of earthquake events
  */
 function MagnitudeChart({ events = [] }) {
   const brackets = [
@@ -13,8 +18,8 @@ function MagnitudeChart({ events = [] }) {
 
   const totalEvents = events.length || 1;
 
-  const bracketCounts = brackets.map(b => {
-    const count = events.filter(e => e.magnitude >= b.min && e.magnitude < b.max).length;
+  const bracketCounts = brackets.map((b) => {
+    const count = events.filter((e) => e.magnitude >= b.min && e.magnitude < b.max).length;
     const percentage = Math.round((count / totalEvents) * 100);
     return {
       ...b,
@@ -24,16 +29,12 @@ function MagnitudeChart({ events = [] }) {
   });
 
   return (
-    <div className="widget-card">
-      <div className="widget-header">
-        <h3 className="widget-title">Earthquake distribution by magnitude</h3>
-      </div>
-      <p className="widget-description">
-        Breakdown of recorded seismic activity by intensity levels.
-      </p>
-
+    <WidgetCard
+      title="Earthquake distribution by magnitude"
+      description="Breakdown of recorded seismic activity by intensity levels."
+    >
       <div className="distribution-list">
-        {bracketCounts.map(b => (
+        {bracketCounts.map((b) => (
           <div key={b.label} className="distribution-item">
             <div className="distribution-info">
               <span className="distribution-category">{b.label}</span>
@@ -42,11 +43,11 @@ function MagnitudeChart({ events = [] }) {
               </span>
             </div>
             <div className="progress-bar-track">
-              <div 
+              <div
                 className="progress-bar-fill"
-                style={{ 
+                style={{
                   width: `${b.percentage}%`,
-                  backgroundColor: b.color 
+                  backgroundColor: b.color
                 }}
                 role="progressbar"
                 aria-valuenow={b.percentage}
@@ -57,7 +58,7 @@ function MagnitudeChart({ events = [] }) {
           </div>
         ))}
       </div>
-    </div>
+    </WidgetCard>
   );
 }
 
