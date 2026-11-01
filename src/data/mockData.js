@@ -1,4 +1,3 @@
-// Mock data for USGS Earthquakes dashboard
 export const mockEarthquakes = [
   {
     id: 'us7000m1a1',
@@ -122,11 +121,6 @@ export const mockEarthquakes = [
   }
 ];
 
-/**
- * Computes dashboard KPI indicators dynamically from event dataset
- * @param {Array} events - Earthquake event objects
- * @returns {Array<{id: string, title: string, value: string, change: string, isPositive: boolean, description: string}>}
- */
 export function getKpiMetrics(events = mockEarthquakes) {
   const total = events.length;
   const strongCount = events.filter((e) => e.magnitude >= 6.0).length;

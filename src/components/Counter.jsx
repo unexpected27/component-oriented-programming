@@ -2,21 +2,9 @@ import { useState } from 'react';
 import WidgetCard from './WidgetCard';
 import MagnitudeBadge from './MagnitudeBadge';
 
-/**
- * Counter / Stepper Component
- * Manages local state (useState) and event handling as per lab requirement.
- * Notifies parent on state changes via `onChange`.
- *
- * @param {Object} props
- * @param {number} [props.initialValue=4.0] - Starting/default counter value
- * @param {number} [props.min=1.0] - Minimum threshold limit
- * @param {number} [props.max=9.0] - Maximum threshold limit
- * @param {number} [props.step=0.5] - Step increment/decrement
- * @param {(val: number) => void} [props.onChange] - Callback fired on threshold change
- */
 function Counter({
-  initialValue = 4.0,
-  min = 1.0,
+  initialValue = 1.0,
+  min = 0.0,
   max = 9.0,
   step = 0.5,
   onChange

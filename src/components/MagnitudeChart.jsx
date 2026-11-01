@@ -1,13 +1,5 @@
 import WidgetCard from './WidgetCard';
 
-/**
- * MagnitudeChart Component
- * Visualizes earthquake distribution by magnitude bracket.
- * Uses WidgetCard container for clean composition via `children`.
- *
- * @param {Object} props
- * @param {Array} props.events - Array of earthquake events
- */
 function MagnitudeChart({ events = [] }) {
   const brackets = [
     { label: 'Weak (< 3.5)', min: 0, max: 3.5, color: 'var(--color-weak, #0969da)' },

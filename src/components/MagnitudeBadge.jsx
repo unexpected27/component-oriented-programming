@@ -1,11 +1,3 @@
-/**
- * MagnitudeBadge Component
- * Presentational component rendering a standardized colored magnitude badge.
- *
- * @param {Object} props
- * @param {number} props.magnitude - Numeric magnitude value
- * @param {string} [props.prefix='M '] - Optional prefix
- */
 function MagnitudeBadge({ magnitude, prefix = 'M ' }) {
   const getBadgeClass = (val) => {
     if (val >= 6.5) return 'badge badge-strong';

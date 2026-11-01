@@ -1,12 +1,3 @@
-/**
- * EventDrilldown Component
- * Presentational drilldown panel displaying detailed event properties.
- *
- * @param {Object} props
- * @param {Object} props.event - Selected earthquake event
- * @param {string} props.depthUnit - 'km' or 'mi'
- * @param {() => void} props.onClose - Close callback handler
- */
 function EventDrilldown({ event, depthUnit, onClose }) {
   if (!event) return null;
 
@@ -34,7 +25,7 @@ function EventDrilldown({ event, depthUnit, onClose }) {
         <div className="drilldown-item">
           <span className="drilldown-label">Coordinates</span>
           <span className="drilldown-value">
-            {event.coordinates.latitude.toFixed(2)}° N, {event.coordinates.longitude.toFixed(2)}° E
+            {event.coordinates.latitude.toFixed(3)}° N, {event.coordinates.longitude.toFixed(3)}° E
           </span>
         </div>
         <div className="drilldown-item">
@@ -46,7 +37,11 @@ function EventDrilldown({ event, depthUnit, onClose }) {
           <span className="drilldown-value">{event.region}</span>
         </div>
         <div className="drilldown-item">
-          <span className="drilldown-label">Tsunami warning</span>
+          <span className="drilldown-label">Significance rating</span>
+          <span className="drilldown-value">{event.significance} / 1000</span>
+        </div>
+        <div className="drilldown-item">
+          <span className="drilldown-label">Tsunami alert</span>
           <span className={`drilldown-value ${event.tsunami ? 'tsunami-alert' : ''}`}>
             {event.tsunami ? 'YES (High Risk)' : 'NO'}
           </span>
@@ -58,6 +53,17 @@ function EventDrilldown({ event, depthUnit, onClose }) {
         <div className="drilldown-item">
           <span className="drilldown-label">Processing status</span>
           <span className="drilldown-value status-badge-item">{event.status}</span>
+        </div>
+        <div className="drilldown-item">
+          <span className="drilldown-label">Official USGS Page</span>
+          <a
+            href={event.usgsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="drilldown-link"
+          >
+            Open event report ↗
+          </a>
         </div>
       </div>
     </div>

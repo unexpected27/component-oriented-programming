@@ -1,7 +1,3 @@
-/**
- * Reusable KPI Card Component
- * Receives title, value, change, isPositive, and description via props.
- */
 function KpiCard({ title, value, change, isPositive = true, description }) {
   return (
     <div className="kpi-card">

@@ -1,12 +1,3 @@
-/**
- * CategoryFilter Component
- * Controlled select input for selecting magnitude category.
- *
- * @param {Object} props
- * @param {string} props.value - Currently selected category
- * @param {(category: string) => void} props.onChange - Selection change handler
- * @param {number} props.totalCount - Total number of available events
- */
 function CategoryFilter({ value, onChange, totalCount }) {
   return (
     <div className="filter-controls">
