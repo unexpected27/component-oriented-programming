@@ -19,6 +19,7 @@ function EarthquakeTable({
   selectedEventId = null,
   onToggleSelect,
   onRetry,
+  onResetFilters,
   minMagnitude = 0
 }) {
   const selectedEvent = events.find((e) => e.id === selectedEventId);
@@ -56,11 +57,13 @@ function EarthquakeTable({
 
   const headerControls = (
     <div className="table-header-controls">
-      <CategoryFilter
-        value={category}
-        onChange={onCategoryChange}
-        totalCount={totalCount}
-      />
+      {onCategoryChange && (
+        <CategoryFilter
+          value={category}
+          onChange={onCategoryChange}
+          totalCount={totalCount}
+        />
+      )}
       {onRetry && (
         <button
           type="button"
@@ -90,7 +93,7 @@ function EarthquakeTable({
       {!isLoading && !error && totalCount === 0 && (
         <EmptyState
           title="No earthquake events reported"
-          message="No seismic activity was recorded by USGS in the selected 24-hour timeframe."
+          message="No seismic activity was recorded by USGS in the selected timeframe."
           actionLabel="Refresh feed"
           onAction={onRetry}
         />
@@ -125,7 +128,18 @@ function EarthquakeTable({
                 ) : (
                   <tr>
                     <td colSpan="7" className="no-data">
-                      No earthquakes match the current filters (category: {category}, threshold: ≥ M {minMagnitude.toFixed(1)}).
+                      <div className="table-no-data-content">
+                        <p>No earthquakes match the current filters.</p>
+                        {onResetFilters && (
+                          <button
+                            type="button"
+                            className="btn btn-secondary btn-sm"
+                            onClick={onResetFilters}
+                          >
+                            Reset filters
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 )}

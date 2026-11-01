@@ -1,65 +1,77 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import KpiCard from './KpiCard';
 import Counter from './Counter';
 import Toggle from './Toggle';
 import WidgetCard from './WidgetCard';
 import MagnitudeChart from './MagnitudeChart';
+import EarthquakeFilterBar from './EarthquakeFilterBar';
 import EarthquakeTable from './EarthquakeTable';
-import { fetchEarthquakes } from '../services/earthquakeService';
+import useFetch from '../hooks/useFetch';
+import useDebounce from '../hooks/useDebounce';
+import { buildEarthquakeQueryUrl, normalizeFeature } from '../services/earthquakeService';
 import { calculateKpis } from '../utils/kpiMetrics';
 
 const DEFAULT_THRESHOLD = 1.0;
 
-function EarthquakeDashboardContainer({ theme, onThemeChange }) {
-  const [events, setEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [reloadTrigger, setReloadTrigger] = useState(0);
+const DEFAULT_FILTERS = {
+  searchQuery: '',
+  minMagnitude: '0',
+  category: 'all',
+  limit: '50',
+  orderBy: 'time'
+};
 
+function EarthquakeDashboardContainer({ theme, onThemeChange }) {
   const [depthUnit, setDepthUnit] = useState('km');
   const [threshold, setThreshold] = useState(DEFAULT_THRESHOLD);
-  const [category, setCategory] = useState('all');
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [sortConfig, setSortConfig] = useState({ field: 'time', direction: 'desc' });
   const [selectedEventId, setSelectedEventId] = useState(null);
 
-  useEffect(() => {
-    let isMounted = true;
+  const debouncedFilters = useDebounce(filters, 400);
 
-    fetchEarthquakes()
-      .then((data) => {
-        if (isMounted) {
-          setEvents(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err.message || 'Failed to fetch seismic events');
-          setIsLoading(false);
-        }
-      });
+  const apiUrl = useMemo(() => {
+    return buildEarthquakeQueryUrl({
+      limit: debouncedFilters.limit,
+      minMagnitude: debouncedFilters.minMagnitude,
+      orderBy: debouncedFilters.orderBy
+    });
+  }, [debouncedFilters.limit, debouncedFilters.minMagnitude, debouncedFilters.orderBy]);
 
-    return () => {
-      isMounted = false;
-    };
-  }, [reloadTrigger]);
+  const { data, loading, error, refetch } = useFetch(apiUrl);
 
-  const liveKpis = useMemo(() => {
-    return calculateKpis(events, depthUnit);
-  }, [events, depthUnit]);
+  const rawEvents = useMemo(() => {
+    if (!data || !Array.isArray(data.features)) {
+      return [];
+    }
+    return data.features.map(normalizeFeature);
+  }, [data]);
 
   const filteredEvents = useMemo(() => {
-    return events.filter((event) => {
+    const query = debouncedFilters.searchQuery.trim().toLowerCase();
+    const category = debouncedFilters.category;
+
+    return rawEvents.filter((event) => {
       if (threshold > 0 && event.magnitude < threshold) {
         return false;
       }
+
+      if (query) {
+        const matchPlace = event.place.toLowerCase().includes(query);
+        const matchRegion = event.region.toLowerCase().includes(query);
+        if (!matchPlace && !matchRegion) {
+          return false;
+        }
+      }
+
       if (category === 'weak') return event.magnitude < 3.5;
       if (category === 'light') return event.magnitude >= 3.5 && event.magnitude < 5.0;
       if (category === 'moderate') return event.magnitude >= 5.0 && event.magnitude < 6.5;
       if (category === 'strong') return event.magnitude >= 6.5;
+
       return true;
     });
-  }, [events, threshold, category]);
+  }, [rawEvents, threshold, debouncedFilters.searchQuery, debouncedFilters.category]);
 
   const sortedEvents = useMemo(() => {
     return [...filteredEvents].sort((a, b) => {
@@ -77,6 +89,31 @@ function EarthquakeDashboardContainer({ theme, onThemeChange }) {
       return direction === 'asc' ? numA - numB : numB - numA;
     });
   }, [filteredEvents, sortConfig]);
+
+  const liveKpis = useMemo(() => {
+    return calculateKpis(filteredEvents, depthUnit);
+  }, [filteredEvents, depthUnit]);
+
+  const isFiltered = useMemo(() => {
+    return (
+      filters.searchQuery !== DEFAULT_FILTERS.searchQuery ||
+      filters.minMagnitude !== DEFAULT_FILTERS.minMagnitude ||
+      filters.category !== DEFAULT_FILTERS.category ||
+      filters.limit !== DEFAULT_FILTERS.limit ||
+      filters.orderBy !== DEFAULT_FILTERS.orderBy
+    );
+  }, [filters]);
+
+  const handleFilterChange = (field, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleResetFilters = () => {
+    setFilters(DEFAULT_FILTERS);
+  };
 
   const handleSort = (field) => {
     setSortConfig((prev) => {
@@ -98,12 +135,6 @@ function EarthquakeDashboardContainer({ theme, onThemeChange }) {
     setSelectedEventId((prev) => (prev === id ? null : id));
   };
 
-  const handleRetry = () => {
-    setIsLoading(true);
-    setError(null);
-    setReloadTrigger((prev) => prev + 1);
-  };
-
   return (
     <div className="app-container">
       <header className="app-header">
@@ -112,9 +143,9 @@ function EarthquakeDashboardContainer({ theme, onThemeChange }) {
           <p className="page-subtitle">Real-time global seismic activity monitoring via USGS API</p>
         </div>
         <div className="header-status">
-          {isLoading && <span className="status-badge-live status-badge-loading">Fetching USGS...</span>}
-          {!isLoading && !error && <span className="status-badge-live">Live USGS Feed</span>}
-          {!isLoading && error && <span className="status-badge-live status-badge-error">Feed Offline</span>}
+          {loading && <span className="status-badge-live status-badge-loading">Fetching USGS...</span>}
+          {!loading && !error && <span className="status-badge-live">Live USGS Feed</span>}
+          {!loading && error && <span className="status-badge-live status-badge-error">Feed Offline</span>}
         </div>
       </header>
 
@@ -130,6 +161,18 @@ function EarthquakeDashboardContainer({ theme, onThemeChange }) {
               description={kpi.description}
             />
           ))}
+        </section>
+
+        <section className="filter-panel-section" aria-label="Earthquake search and filters">
+          <EarthquakeFilterBar
+            filters={filters}
+            onChange={handleFilterChange}
+            onReset={handleResetFilters}
+            isFiltered={isFiltered}
+            isLoading={loading}
+            totalCount={rawEvents.length}
+            filteredCount={filteredEvents.length}
+          />
         </section>
 
         <section className="controls-grid" aria-label="Dashboard controls">
@@ -171,30 +214,31 @@ function EarthquakeDashboardContainer({ theme, onThemeChange }) {
         </section>
 
         <section className="visualization-section" aria-label="Distribution chart">
-          <MagnitudeChart events={events} />
+          <MagnitudeChart events={filteredEvents} />
         </section>
 
         <section className="list-section" aria-label="Events table">
           <EarthquakeTable
             events={sortedEvents}
-            totalCount={events.length}
-            isLoading={isLoading}
+            totalCount={rawEvents.length}
+            isLoading={loading}
             error={error}
             depthUnit={depthUnit}
-            category={category}
-            onCategoryChange={setCategory}
+            category={filters.category}
+            onCategoryChange={(val) => handleFilterChange('category', val)}
             sortConfig={sortConfig}
             onSort={handleSort}
             selectedEventId={selectedEventId}
             onToggleSelect={handleToggleSelect}
-            onRetry={handleRetry}
+            onRetry={refetch}
             minMagnitude={threshold}
+            onResetFilters={handleResetFilters}
           />
         </section>
       </main>
 
       <footer className="app-footer">
-        <p>React + Vite • Component-Oriented Programming • Laboratory 02 • 2026</p>
+        <p>React + Vite • Component-Oriented Programming • Laboratory 03 • 2026</p>
       </footer>
     </div>
   );

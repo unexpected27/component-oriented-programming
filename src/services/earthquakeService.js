@@ -1,4 +1,30 @@
 const USGS_FEED_URL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson';
+const USGS_QUERY_BASE_URL = 'https://earthquake.usgs.gov/fdsnws/event/1/query';
+
+export function buildEarthquakeQueryUrl({
+  limit = 50,
+  minMagnitude = 0,
+  orderBy = 'time'
+} = {}) {
+  const params = new URLSearchParams();
+  params.set('format', 'geojson');
+
+  const parsedLimit = Number(limit);
+  if (parsedLimit > 0) {
+    params.set('limit', String(parsedLimit));
+  }
+
+  const parsedMinMag = Number(minMagnitude);
+  if (parsedMinMag > 0) {
+    params.set('minmagnitude', String(parsedMinMag));
+  }
+
+  if (orderBy) {
+    params.set('orderby', orderBy);
+  }
+
+  return `${USGS_QUERY_BASE_URL}?${params.toString()}`;
+}
 
 export async function fetchEarthquakes(url = USGS_FEED_URL) {
   const response = await fetch(url);
