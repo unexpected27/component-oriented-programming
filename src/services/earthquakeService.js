@@ -1,5 +1,6 @@
 const USGS_FEED_URL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson';
 const USGS_QUERY_BASE_URL = 'https://earthquake.usgs.gov/fdsnws/event/1/query';
+const USGS_DETAIL_BASE_URL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail';
 
 export function buildEarthquakeQueryUrl({
   limit = 50,
@@ -38,6 +39,38 @@ export async function fetchEarthquakes(url = USGS_FEED_URL) {
   return data.features.map(normalizeFeature);
 }
 
+export async function fetchEarthquakeById(id) {
+  if (!id) {
+    const error = new Error('Earthquake event ID is missing.');
+    error.status = 400;
+    throw error;
+  }
+
+  const detailUrl = `${USGS_DETAIL_BASE_URL}/${encodeURIComponent(id)}.geojson`;
+  const response = await fetch(detailUrl);
+
+  if (response.status === 404) {
+    const queryUrl = `${USGS_QUERY_BASE_URL}?eventid=${encodeURIComponent(id)}&format=geojson`;
+    const fallbackResponse = await fetch(queryUrl);
+    if (!fallbackResponse.ok) {
+      const error = new Error(`Earthquake event "${id}" was not found.`);
+      error.status = 404;
+      throw error;
+    }
+    const fallbackData = await fallbackResponse.json();
+    return normalizeDetailFeature(fallbackData);
+  }
+
+  if (!response.ok) {
+    const error = new Error(`Failed to load event details (${response.status}: ${response.statusText})`);
+    error.status = response.status;
+    throw error;
+  }
+
+  const data = await response.json();
+  return normalizeDetailFeature(data);
+}
+
 export function normalizeFeature(feature) {
   const properties = feature.properties || {};
   const geometry = feature.geometry || {};
@@ -61,6 +94,49 @@ export function normalizeFeature(feature) {
     status: properties.status || 'unknown',
     felt: properties.felt || 0,
     alert: properties.alert || null,
+    usgsUrl: properties.url || `https://earthquake.usgs.gov/earthquakes/eventpage/${feature.id}`
+  };
+}
+
+export function normalizeDetailFeature(feature) {
+  const properties = feature.properties || {};
+  const geometry = feature.geometry || {};
+  const coords = Array.isArray(geometry.coordinates) ? geometry.coordinates : [0, 0, 0];
+  const place = properties.place || 'Unknown Location';
+
+  return {
+    id: feature.id || properties.code || 'unknown',
+    place,
+    region: extractRegion(place),
+    magnitude: typeof properties.mag === 'number' ? properties.mag : 0,
+    magType: properties.magType || 'N/A',
+    type: properties.type || 'earthquake',
+    title: properties.title || place,
+    time: properties.time || Date.now(),
+    formattedTime: formatUtcTime(properties.time),
+    updated: properties.updated || null,
+    formattedUpdated: formatUtcTime(properties.updated),
+    tz: properties.tz,
+    depth: typeof coords[2] === 'number' ? coords[2] : 0,
+    coordinates: {
+      longitude: coords[0] || 0,
+      latitude: coords[1] || 0
+    },
+    significance: properties.sig || 0,
+    tsunami: properties.tsunami || 0,
+    status: properties.status || 'unknown',
+    felt: properties.felt || 0,
+    cdi: properties.cdi != null ? properties.cdi : null,
+    mmi: properties.mmi != null ? properties.mmi : null,
+    alert: properties.alert || null,
+    net: properties.net || 'N/A',
+    code: properties.code || feature.id || 'N/A',
+    ids: properties.ids || '',
+    sources: properties.sources || 'N/A',
+    nst: properties.nst != null ? properties.nst : null,
+    dmin: properties.dmin != null ? properties.dmin : null,
+    rms: properties.rms != null ? properties.rms : null,
+    gap: properties.gap != null ? properties.gap : null,
     usgsUrl: properties.url || `https://earthquake.usgs.gov/earthquakes/eventpage/${feature.id}`
   };
 }

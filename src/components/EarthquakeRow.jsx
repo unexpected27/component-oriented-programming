@@ -1,6 +1,9 @@
+import { useNavigate, Link } from 'react-router';
 import MagnitudeBadge from './MagnitudeBadge';
 
-function EarthquakeRow({ event, depthUnit, isSelected, onToggleSelect }) {
+function EarthquakeRow({ event, depthUnit = 'km' }) {
+  const navigate = useNavigate();
+
   const formatDepth = (depthKm) => {
     if (depthUnit === 'mi') {
       return `${(depthKm * 0.621371).toFixed(1)} mi`;
@@ -8,10 +11,23 @@ function EarthquakeRow({ event, depthUnit, isSelected, onToggleSelect }) {
     return `${depthKm.toFixed(1)} km`;
   };
 
+  const handleRowClick = () => {
+    navigate(`/event/${event.id}`);
+  };
+
   return (
     <tr
-      className={`table-row ${isSelected ? 'row-selected' : ''}`}
-      onClick={onToggleSelect}
+      className="table-row table-row-clickable"
+      onClick={handleRowClick}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleRowClick();
+        }
+      }}
+      role="link"
+      aria-label={`View details for earthquake at ${event.place}`}
     >
       <td>
         <MagnitudeBadge magnitude={event.magnitude} />
@@ -28,17 +44,13 @@ function EarthquakeRow({ event, depthUnit, isSelected, onToggleSelect }) {
         </span>
       </td>
       <td>
-        <button
-          type="button"
-          className={`btn btn-secondary btn-sm ${isSelected ? 'btn-active' : ''}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleSelect();
-          }}
-          aria-expanded={isSelected}
+        <Link
+          to={`/event/${event.id}`}
+          className="btn btn-secondary btn-sm"
+          onClick={(e) => e.stopPropagation()}
         >
-          {isSelected ? 'Hide' : 'Details'}
-        </button>
+          Details ↗
+        </Link>
       </td>
     </tr>
   );

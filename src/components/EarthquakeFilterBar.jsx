@@ -1,20 +1,19 @@
+import useFilters from '../hooks/useFilters';
 import WidgetCard from './WidgetCard';
 
 function EarthquakeFilterBar({
-  filters,
-  onChange,
-  onReset,
-  isFiltered,
-  isLoading,
-  totalCount,
-  filteredCount
+  isLoading = false,
+  totalCount = 0,
+  filteredCount = 0
 }) {
+  const { filters, updateFilter, resetFilters, isFiltered } = useFilters();
+
   const handleTextChange = (e) => {
-    onChange('searchQuery', e.target.value);
+    updateFilter('searchQuery', e.target.value);
   };
 
   const handleClearSearch = () => {
-    onChange('searchQuery', '');
+    updateFilter('searchQuery', '');
   };
 
   const headerActions = (
@@ -70,7 +69,7 @@ function EarthquakeFilterBar({
               id="filter-min-mag"
               className="filter-select-input"
               value={filters.minMagnitude}
-              onChange={(e) => onChange('minMagnitude', e.target.value)}
+              onChange={(e) => updateFilter('minMagnitude', e.target.value)}
             >
               <option value="0">All magnitudes (0+)</option>
               <option value="1.0">M 1.0+ (Micro)</option>
@@ -88,7 +87,7 @@ function EarthquakeFilterBar({
               id="filter-category"
               className="filter-select-input"
               value={filters.category}
-              onChange={(e) => onChange('category', e.target.value)}
+              onChange={(e) => updateFilter('category', e.target.value)}
             >
               <option value="all">All categories</option>
               <option value="weak">Weak (&lt; 3.5)</option>
@@ -106,7 +105,7 @@ function EarthquakeFilterBar({
               id="filter-order-by"
               className="filter-select-input"
               value={filters.orderBy}
-              onChange={(e) => onChange('orderBy', e.target.value)}
+              onChange={(e) => updateFilter('orderBy', e.target.value)}
             >
               <option value="time">Newest first</option>
               <option value="time-asc">Oldest first</option>
@@ -123,7 +122,7 @@ function EarthquakeFilterBar({
               id="filter-limit"
               className="filter-select-input"
               value={filters.limit}
-              onChange={(e) => onChange('limit', e.target.value)}
+              onChange={(e) => updateFilter('limit', e.target.value)}
             >
               <option value="25">25 events</option>
               <option value="50">50 events</option>
@@ -136,7 +135,7 @@ function EarthquakeFilterBar({
             <button
               type="button"
               className="btn btn-secondary btn-reset-filters"
-              onClick={onReset}
+              onClick={resetFilters}
               disabled={!isFiltered}
               title={isFiltered ? 'Reset all filters to defaults' : 'Filters are already at default'}
             >

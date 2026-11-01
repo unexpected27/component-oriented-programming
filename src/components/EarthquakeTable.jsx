@@ -1,10 +1,10 @@
 import WidgetCard from './WidgetCard';
 import CategoryFilter from './CategoryFilter';
 import EarthquakeRow from './EarthquakeRow';
-import EventDrilldown from './EventDrilldown';
 import LoadingState from './LoadingState';
 import ErrorState from './ErrorState';
 import EmptyState from './EmptyState';
+import useFilters from '../hooks/useFilters';
 
 function EarthquakeTable({
   events = [],
@@ -12,17 +12,12 @@ function EarthquakeTable({
   isLoading = false,
   error = null,
   depthUnit = 'km',
-  category = 'all',
-  onCategoryChange,
   sortConfig = { field: 'time', direction: 'desc' },
   onSort,
-  selectedEventId = null,
-  onToggleSelect,
   onRetry,
-  onResetFilters,
   minMagnitude = 0
 }) {
-  const selectedEvent = events.find((e) => e.id === selectedEventId);
+  const { filters, updateFilter, resetFilters } = useFilters();
 
   const getSortIcon = (field) => {
     if (sortConfig.field !== field) {
@@ -57,13 +52,11 @@ function EarthquakeTable({
 
   const headerControls = (
     <div className="table-header-controls">
-      {onCategoryChange && (
-        <CategoryFilter
-          value={category}
-          onChange={onCategoryChange}
-          totalCount={totalCount}
-        />
-      )}
+      <CategoryFilter
+        value={filters.category}
+        onChange={(val) => updateFilter('category', val)}
+        totalCount={totalCount}
+      />
       {onRetry && (
         <button
           type="button"
@@ -100,59 +93,47 @@ function EarthquakeTable({
       )}
 
       {!isLoading && !error && totalCount > 0 && (
-        <>
-          <div className="table-responsive">
-            <table className="events-table">
-              <thead>
+        <div className="table-responsive">
+          <table className="events-table">
+            <thead>
+              <tr>
+                {renderSortableHeader('magnitude', 'Magnitude')}
+                {renderSortableHeader('place', 'Location')}
+                {renderSortableHeader('time', 'Time (UTC)')}
+                {renderSortableHeader('depth', 'Depth')}
+                {renderSortableHeader('region', 'Region')}
+                {renderSortableHeader('significance', 'Impact')}
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.length > 0 ? (
+                events.map((event) => (
+                  <EarthquakeRow
+                    key={event.id}
+                    event={event}
+                    depthUnit={depthUnit}
+                  />
+                ))
+              ) : (
                 <tr>
-                  {renderSortableHeader('magnitude', 'Magnitude')}
-                  {renderSortableHeader('place', 'Location')}
-                  {renderSortableHeader('time', 'Time (UTC)')}
-                  {renderSortableHeader('depth', 'Depth')}
-                  {renderSortableHeader('region', 'Region')}
-                  {renderSortableHeader('significance', 'Impact')}
-                  <th>Actions</th>
+                  <td colSpan="7" className="no-data">
+                    <div className="table-no-data-content">
+                      <p>No earthquakes match the current filters.</p>
+                      <button
+                        type="button"
+                        className="btn btn-secondary btn-sm"
+                        onClick={resetFilters}
+                      >
+                        Reset filters
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {events.length > 0 ? (
-                  events.map((event) => (
-                    <EarthquakeRow
-                      key={event.id}
-                      event={event}
-                      depthUnit={depthUnit}
-                      isSelected={selectedEventId === event.id}
-                      onToggleSelect={() => onToggleSelect(event.id)}
-                    />
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="no-data">
-                      <div className="table-no-data-content">
-                        <p>No earthquakes match the current filters.</p>
-                        {onResetFilters && (
-                          <button
-                            type="button"
-                            className="btn btn-secondary btn-sm"
-                            onClick={onResetFilters}
-                          >
-                            Reset filters
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          <EventDrilldown
-            event={selectedEvent}
-            depthUnit={depthUnit}
-            onClose={() => onToggleSelect(selectedEventId)}
-          />
-        </>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </WidgetCard>
   );
