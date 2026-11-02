@@ -1,10 +1,10 @@
-import WidgetCard from './WidgetCard';
+import WidgetCard from '../ui/WidgetCard';
 import CategoryFilter from './CategoryFilter';
 import EarthquakeRow from './EarthquakeRow';
-import LoadingState from './LoadingState';
-import ErrorState from './ErrorState';
-import EmptyState from './EmptyState';
-import useFilters from '../hooks/useFilters';
+import LoadingState from '../ui/LoadingState';
+import ErrorState from '../ui/ErrorState';
+import EmptyState from '../ui/EmptyState';
+import useFilters from '../../hooks/useFilters';
 
 function EarthquakeTable({
   events = [],

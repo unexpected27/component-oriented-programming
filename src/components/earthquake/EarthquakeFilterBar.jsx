@@ -1,5 +1,5 @@
-import useFilters from '../hooks/useFilters';
-import WidgetCard from './WidgetCard';
+import useFilters from '../../hooks/useFilters';
+import WidgetCard from '../ui/WidgetCard';
 
 function EarthquakeFilterBar({
   isLoading = false,

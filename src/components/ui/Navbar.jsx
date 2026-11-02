@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router';
-import useTheme from '../hooks/useTheme';
+import useTheme from '../../hooks/useTheme';
 
 function Navbar() {
   const { theme, toggleTheme } = useTheme();

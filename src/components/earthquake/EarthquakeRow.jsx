@@ -1,5 +1,5 @@
 import { useNavigate, Link } from 'react-router';
-import MagnitudeBadge from './MagnitudeBadge';
+import MagnitudeBadge from '../ui/MagnitudeBadge';
 
 function EarthquakeRow({ event, depthUnit = 'km' }) {
   const navigate = useNavigate();

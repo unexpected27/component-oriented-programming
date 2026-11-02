@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router';
-import MagnitudeBadge from '../components/MagnitudeBadge';
-import LoadingState from '../components/LoadingState';
-import ErrorState from '../components/ErrorState';
-import Toggle from '../components/Toggle';
-import WidgetCard from '../components/WidgetCard';
+import MagnitudeBadge from '../components/ui/MagnitudeBadge';
+import LoadingState from '../components/ui/LoadingState';
+import ErrorState from '../components/ui/ErrorState';
+import Toggle from '../components/ui/Toggle';
+import WidgetCard from '../components/ui/WidgetCard';
 import useFetch from '../hooks/useFetch';
 import { normalizeDetailFeature } from '../services/earthquakeService';
 

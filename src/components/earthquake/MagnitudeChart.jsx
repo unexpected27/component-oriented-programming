@@ -1,4 +1,4 @@
-import WidgetCard from './WidgetCard';
+import WidgetCard from '../ui/WidgetCard';
 
 function MagnitudeChart({ events = [] }) {
   const brackets = [
