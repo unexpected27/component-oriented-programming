@@ -1,8 +1,11 @@
 import { useNavigate, Link } from 'react-router';
 import MagnitudeBadge from '../ui/MagnitudeBadge';
+import useFavorites from '../../hooks/useFavorites';
 
 function EarthquakeRow({ event, depthUnit = 'km' }) {
   const navigate = useNavigate();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const isFav = isFavorite(event.id);
 
   const formatDepth = (depthKm) => {
     if (depthUnit === 'mi') {
@@ -13,6 +16,11 @@ function EarthquakeRow({ event, depthUnit = 'km' }) {
 
   const handleRowClick = () => {
     navigate(`/event/${event.id}`);
+  };
+
+  const handleFavoriteClick = (e) => {
+    e.stopPropagation();
+    toggleFavorite(event.id);
   };
 
   return (
@@ -29,6 +37,17 @@ function EarthquakeRow({ event, depthUnit = 'km' }) {
       role="link"
       aria-label={`View details for earthquake at ${event.place}`}
     >
+      <td className="cell-favorite">
+        <button
+          type="button"
+          className={`btn-favorite ${isFav ? 'is-favorite' : ''}`}
+          onClick={handleFavoriteClick}
+          aria-label={isFav ? `Remove ${event.place} from favorites` : `Add ${event.place} to favorites`}
+          title={isFav ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          <span aria-hidden="true">{isFav ? '★' : '☆'}</span>
+        </button>
+      </td>
       <td>
         <MagnitudeBadge magnitude={event.magnitude} />
       </td>

@@ -6,11 +6,13 @@ import ErrorState from '../components/ui/ErrorState';
 import Toggle from '../components/ui/Toggle';
 import WidgetCard from '../components/ui/WidgetCard';
 import useFetch from '../hooks/useFetch';
+import useFavorites from '../hooks/useFavorites';
 import { normalizeDetailFeature } from '../services/earthquakeService';
 
 function EventDetailsPage() {
   const { id } = useParams();
   const [depthUnit, setDepthUnit] = useState('km');
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const detailUrl = useMemo(() => {
     return id ? `https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/${encodeURIComponent(id)}.geojson` : null;
@@ -22,6 +24,8 @@ function EventDetailsPage() {
     if (!data) return null;
     return normalizeDetailFeature(data);
   }, [data]);
+
+  const isFav = event ? isFavorite(event.id) : false;
 
   const formatDepth = (depthKm) => {
     if (depthUnit === 'mi') {
@@ -124,6 +128,16 @@ function EventDetailsPage() {
           </div>
 
           <div className="details-hero-controls">
+            <button
+              type="button"
+              className={`btn ${isFav ? 'btn-favorite-active' : 'btn-secondary'} btn-favorite-detail`}
+              onClick={() => toggleFavorite(event.id)}
+              aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+              title={isFav ? 'Remove from favorites' : 'Save to favorites'}
+            >
+              <span className="fav-star-icon" aria-hidden="true">{isFav ? '★' : '☆'}</span>
+              <span>{isFav ? 'Favorited' : 'Add to favorites'}</span>
+            </button>
             <Toggle
               label="Depth unit"
               ariaLabel="Select depth unit"

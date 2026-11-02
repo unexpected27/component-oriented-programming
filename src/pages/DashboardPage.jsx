@@ -9,6 +9,7 @@ import EarthquakeTable from '../components/earthquake/EarthquakeTable';
 import useFetch from '../hooks/useFetch';
 import useDebounce from '../hooks/useDebounce';
 import useFilters from '../hooks/useFilters';
+import useFavorites from '../hooks/useFavorites';
 import { buildEarthquakeQueryUrl, normalizeFeature } from '../services/earthquakeService';
 import { calculateKpis } from '../utils/kpiMetrics';
 
@@ -20,6 +21,7 @@ function DashboardPage() {
   const [sortConfig, setSortConfig] = useState({ field: 'time', direction: 'desc' });
 
   const { filters } = useFilters();
+  const { favorites } = useFavorites();
   const debouncedFilters = useDebounce(filters, 400);
 
   const apiUrl = useMemo(() => {
@@ -42,8 +44,13 @@ function DashboardPage() {
   const filteredEvents = useMemo(() => {
     const query = debouncedFilters.searchQuery.trim().toLowerCase();
     const category = debouncedFilters.category;
+    const onlyFavs = debouncedFilters.onlyFavorites;
 
     return rawEvents.filter((event) => {
+      if (onlyFavs && !favorites.includes(event.id)) {
+        return false;
+      }
+
       if (threshold > 0 && event.magnitude < threshold) {
         return false;
       }
@@ -63,7 +70,7 @@ function DashboardPage() {
 
       return true;
     });
-  }, [rawEvents, threshold, debouncedFilters.searchQuery, debouncedFilters.category]);
+  }, [rawEvents, threshold, debouncedFilters.searchQuery, debouncedFilters.category, debouncedFilters.onlyFavorites, favorites]);
 
   const sortedEvents = useMemo(() => {
     return [...filteredEvents].sort((a, b) => {

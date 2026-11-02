@@ -10,7 +10,7 @@ function Layout() {
           <Outlet />
         </main>
         <footer className="app-footer">
-          <p>React Router v7 • Context API • Component-Oriented Programming • Laboratory 04 • 2026</p>
+          <p>React Router v7 • Zustand Global State • Recharts • Component-Oriented Programming • Laboratory 05 • 2026</p>
         </footer>
       </div>
     </div>

@@ -1,54 +1,99 @@
+import { useMemo } from 'react';
 import WidgetCard from '../ui/WidgetCard';
+import ChartTypeSelector from './ChartTypeSelector';
+import MagnitudeChartVisualizer from './MagnitudeChartVisualizer';
+import useChartSettings from '../../hooks/useChartSettings';
 
-function MagnitudeChart({ events = [] }) {
-  const brackets = [
-    { label: 'Weak (< 3.5)', min: 0, max: 3.5, color: 'var(--color-weak, #0969da)' },
-    { label: 'Light (3.5 - 4.9)', min: 3.5, max: 5.0, color: 'var(--color-light, #d97706)' },
-    { label: 'Moderate (5.0 - 6.4)', min: 5.0, max: 6.5, color: 'var(--color-moderate, #c2410c)' },
-    { label: 'Strong (6.5+)', min: 6.5, max: 10.0, color: 'var(--color-strong, #cf222e)' }
-  ];
+const BRACKETS = [
+  {
+    category: 'Weak (< 3.5)',
+    shortLabel: 'Weak (<3.5)',
+    min: 0,
+    max: 3.5,
+    color: '#0969da'
+  },
+  {
+    category: 'Light (3.5 – 4.9)',
+    shortLabel: 'Light (3.5–4.9)',
+    min: 3.5,
+    max: 5.0,
+    color: '#d97706'
+  },
+  {
+    category: 'Moderate (5.0 – 6.4)',
+    shortLabel: 'Moderate (5.0–6.4)',
+    min: 5.0,
+    max: 6.5,
+    color: '#c2410c'
+  },
+  {
+    category: 'Strong (6.5+)',
+    shortLabel: 'Strong (6.5+)',
+    min: 6.5,
+    max: 10.0,
+    color: '#cf222e'
+  }
+];
 
-  const totalEvents = events.length || 1;
+function MagnitudeChart({ events = [], chartType: propChartType, onTypeChange }) {
+  const { chartType: storeChartType, setChartType: storeSetChartType } = useChartSettings();
 
-  const bracketCounts = brackets.map((b) => {
-    const count = events.filter((e) => e.magnitude >= b.min && e.magnitude < b.max).length;
-    const percentage = Math.round((count / totalEvents) * 100);
-    return {
-      ...b,
-      count,
-      percentage
-    };
-  });
+  const currentChartType = propChartType || storeChartType;
+  const handleTypeChange = onTypeChange || storeSetChartType;
+
+  const totalEvents = events.length;
+
+  const chartData = useMemo(() => {
+    return BRACKETS.map((bracket) => {
+      const matching = events.filter((e) => e.magnitude >= bracket.min && e.magnitude < bracket.max);
+      const count = matching.length;
+      const percentage = totalEvents > 0 ? Math.round((count / totalEvents) * 100) : 0;
+      const totalDepth = matching.reduce((acc, curr) => acc + (Number(curr.depth) || 0), 0);
+      const avgDepth = count > 0 ? Number((totalDepth / count).toFixed(1)) : 0;
+      const maxMag = count > 0 ? Math.max(...matching.map((e) => Number(e.magnitude) || 0)).toFixed(1) : '0.0';
+
+      return {
+        category: bracket.category,
+        shortLabel: bracket.shortLabel,
+        count,
+        percentage,
+        avgDepth,
+        maxMag,
+        color: bracket.color
+      };
+    });
+  }, [events, totalEvents]);
+
+  const headerControls = (
+    <div className="chart-header-controls">
+      <ChartTypeSelector
+        chartType={currentChartType}
+        onTypeChange={handleTypeChange}
+      />
+    </div>
+  );
 
   return (
     <WidgetCard
       title="Earthquake distribution by magnitude"
-      description="Breakdown of recorded seismic activity by intensity levels."
+      description={`Interactive visual distribution of ${totalEvents} seismic events filtered by magnitude brackets.`}
+      headerActions={headerControls}
     >
-      <div className="distribution-list">
-        {bracketCounts.map((b) => (
-          <div key={b.label} className="distribution-item">
-            <div className="distribution-info">
-              <span className="distribution-category">{b.label}</span>
-              <span className="distribution-meta">
-                {b.count} {b.count === 1 ? 'event' : 'events'} · {b.percentage}%
-              </span>
+      <div className="chart-widget-content">
+        <MagnitudeChartVisualizer
+          data={chartData}
+          chartType={currentChartType}
+        />
+        <div className="chart-summary-badges">
+          {chartData.map((item) => (
+            <div key={item.category} className="chart-stat-pill">
+              <span className="stat-pill-indicator" style={{ backgroundColor: item.color }} />
+              <span className="stat-pill-label">{item.shortLabel}:</span>
+              <span className="stat-pill-count">{item.count}</span>
+              <span className="stat-pill-pct">({item.percentage}%)</span>
             </div>
-            <div className="progress-bar-track">
-              <div
-                className="progress-bar-fill"
-                style={{
-                  width: `${b.percentage}%`,
-                  backgroundColor: b.color
-                }}
-                role="progressbar"
-                aria-valuenow={b.percentage}
-                aria-valuemin={0}
-                aria-valuemax={100}
-              />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </WidgetCard>
   );

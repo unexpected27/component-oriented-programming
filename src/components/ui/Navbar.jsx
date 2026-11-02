@@ -1,8 +1,10 @@
 import { Link, NavLink } from 'react-router';
 import useTheme from '../../hooks/useTheme';
+import useFavorites from '../../hooks/useFavorites';
 
 function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const { count: favoritesCount } = useFavorites();
 
   return (
     <header className="app-navbar">
@@ -28,6 +30,16 @@ function Navbar() {
         </nav>
 
         <div className="navbar-actions">
+          <div
+            className="navbar-favorites-badge"
+            title={`${favoritesCount} earthquake${favoritesCount === 1 ? '' : 's'} in favorites`}
+            aria-label={`${favoritesCount} earthquake${favoritesCount === 1 ? '' : 's'} in favorites`}
+          >
+            <span className="navbar-fav-star" aria-hidden="true">★</span>
+            <span className="navbar-fav-count">{favoritesCount}</span>
+            <span className="navbar-fav-text">Favorites</span>
+          </div>
+
           <button
             type="button"
             className="theme-toggle-btn"

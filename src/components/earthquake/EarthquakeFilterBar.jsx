@@ -1,4 +1,5 @@
 import useFilters from '../../hooks/useFilters';
+import useFavorites from '../../hooks/useFavorites';
 import WidgetCard from '../ui/WidgetCard';
 
 function EarthquakeFilterBar({
@@ -7,6 +8,7 @@ function EarthquakeFilterBar({
   filteredCount = 0
 }) {
   const { filters, updateFilter, resetFilters, isFiltered } = useFilters();
+  const { count: favoritesCount } = useFavorites();
 
   const handleTextChange = (e) => {
     updateFilter('searchQuery', e.target.value);
@@ -132,6 +134,16 @@ function EarthquakeFilterBar({
           </div>
 
           <div className="filter-actions-group">
+            <button
+              type="button"
+              className={`btn-fav-filter ${filters.onlyFavorites ? 'active' : ''}`}
+              onClick={() => updateFilter('onlyFavorites', !filters.onlyFavorites)}
+              title="Filter to show only favorited earthquakes"
+            >
+              <span aria-hidden="true">{filters.onlyFavorites ? '★' : '☆'}</span>
+              <span>Favorites only ({favoritesCount})</span>
+            </button>
+
             <button
               type="button"
               className="btn btn-secondary btn-reset-filters"

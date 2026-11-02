@@ -1,10 +1,16 @@
-import { useContext } from 'react';
-import FilterContext from '../context/FilterContext';
+import useAppStore, { DEFAULT_FILTERS } from '../store/useAppStore';
 
 export default function useFilters() {
-  const context = useContext(FilterContext);
-  if (!context) {
-    throw new Error('useFilters must be used within a FilterProvider');
-  }
-  return context;
+  const filters = useAppStore((state) => state.filters);
+  const updateFilter = useAppStore((state) => state.updateFilter);
+  const resetFilters = useAppStore((state) => state.resetFilters);
+  const isFilteredFn = useAppStore((state) => state.isFiltered);
+
+  return {
+    filters,
+    updateFilter,
+    resetFilters,
+    isFiltered: isFilteredFn(),
+    defaultFilters: DEFAULT_FILTERS
+  };
 }

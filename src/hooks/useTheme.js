@@ -1,10 +1,13 @@
-import { useContext } from 'react';
-import ThemeContext from '../context/ThemeContext';
+import useAppStore from '../store/useAppStore';
 
 export default function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
+  const theme = useAppStore((state) => state.theme);
+  const setTheme = useAppStore((state) => state.setTheme);
+  const toggleTheme = useAppStore((state) => state.toggleTheme);
+
+  return {
+    theme,
+    setTheme,
+    toggleTheme
+  };
 }

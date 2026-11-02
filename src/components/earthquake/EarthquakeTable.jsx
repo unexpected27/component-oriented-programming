@@ -97,6 +97,7 @@ function EarthquakeTable({
           <table className="events-table">
             <thead>
               <tr>
+                <th className="th-fav-col" aria-label="Favorite status">★</th>
                 {renderSortableHeader('magnitude', 'Magnitude')}
                 {renderSortableHeader('place', 'Location')}
                 {renderSortableHeader('time', 'Time (UTC)')}
@@ -117,7 +118,7 @@ function EarthquakeTable({
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="no-data">
+                  <td colSpan="8" className="no-data">
                     <div className="table-no-data-content">
                       <p>No earthquakes match the current filters.</p>
                       <button
