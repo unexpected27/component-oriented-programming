@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import WidgetCard from './WidgetCard';
+import Card from './atoms/Card/Card';
+import Button from './atoms/Button/Button';
 import MagnitudeBadge from './MagnitudeBadge';
 
 function Counter({
@@ -35,7 +36,7 @@ function Counter({
   const isAtDefault = threshold === initialValue;
 
   return (
-    <WidgetCard
+    <Card
       title="Magnitude alert threshold"
       description="Sets the minimum threshold for earthquake monitoring alerts."
     >
@@ -45,35 +46,35 @@ function Counter({
       </div>
 
       <div className="counter-actions">
-        <button
-          type="button"
-          className="btn btn-secondary btn-counter"
+        <Button
+          variant="secondary"
+          className="btn-counter"
           onClick={handleDecrement}
           disabled={threshold <= min}
-          aria-label="Decrease threshold"
+          ariaLabel="Decrease threshold"
         >
           −
-        </button>
-        <button
-          type="button"
-          className="btn btn-secondary btn-reset"
+        </Button>
+        <Button
+          variant="secondary"
+          className="btn-reset"
           onClick={handleReset}
           disabled={isAtDefault}
           title={isAtDefault ? 'Already at default value' : `Reset to ${initialValue.toFixed(1)}`}
         >
           Reset ({initialValue.toFixed(1)})
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary btn-counter"
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-counter"
           onClick={handleIncrement}
           disabled={threshold >= max}
-          aria-label="Increase threshold"
+          ariaLabel="Increase threshold"
         >
           +
-        </button>
+        </Button>
       </div>
-    </WidgetCard>
+    </Card>
   );
 }
 

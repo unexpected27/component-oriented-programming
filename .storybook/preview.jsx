@@ -1,0 +1,18 @@
+import '../src/design-system/tokens.css';
+import '../src/App.css';
+
+const preview = {
+  parameters: {
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i
+      }
+    },
+    a11y: {
+      test: 'todo'
+    }
+  }
+};
+
+export default preview;

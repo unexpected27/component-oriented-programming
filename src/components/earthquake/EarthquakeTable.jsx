@@ -1,10 +1,23 @@
-import WidgetCard from '../ui/WidgetCard';
+import Card from '../ui/atoms/Card/Card';
+import Button from '../ui/atoms/Button/Button';
+import Table from '../ui/molecules/Table/Table';
 import CategoryFilter from './CategoryFilter';
 import EarthquakeRow from './EarthquakeRow';
-import LoadingState from '../ui/LoadingState';
-import ErrorState from '../ui/ErrorState';
-import EmptyState from '../ui/EmptyState';
+import LoadingState from '../ui/molecules/LoadingState/LoadingState';
+import ErrorState from '../ui/molecules/ErrorState/ErrorState';
+import EmptyState from '../ui/molecules/EmptyState/EmptyState';
 import useFilters from '../../hooks/useFilters';
+
+const TABLE_COLUMNS = [
+  { key: 'favorite', label: '★', sortable: false, width: '48px' },
+  { key: 'magnitude', label: 'Magnitude', sortable: true },
+  { key: 'place', label: 'Location', sortable: true },
+  { key: 'time', label: 'Time (UTC)', sortable: true },
+  { key: 'depth', label: 'Depth', sortable: true },
+  { key: 'region', label: 'Region', sortable: true },
+  { key: 'significance', label: 'Impact', sortable: true },
+  { key: 'actions', label: 'Actions', sortable: false }
+];
 
 function EarthquakeTable({
   events = [],
@@ -19,37 +32,6 @@ function EarthquakeTable({
 }) {
   const { filters, updateFilter, resetFilters } = useFilters();
 
-  const getSortIcon = (field) => {
-    if (sortConfig.field !== field) {
-      return '↕';
-    }
-    return sortConfig.direction === 'asc' ? '▲' : '▼';
-  };
-
-  const getAriaSort = (field) => {
-    if (sortConfig.field !== field) {
-      return 'none';
-    }
-    return sortConfig.direction === 'asc' ? 'ascending' : 'descending';
-  };
-
-  const renderSortableHeader = (field, label) => (
-    <th
-      className={`th-sortable ${sortConfig.field === field ? 'th-sorted' : ''}`}
-      aria-sort={getAriaSort(field)}
-    >
-      <button
-        type="button"
-        className="sort-header-btn"
-        onClick={() => onSort(field)}
-        title={`Sort by ${label} (${sortConfig.field === field && sortConfig.direction === 'asc' ? 'descending' : 'ascending'})`}
-      >
-        <span>{label}</span>
-        <span className="sort-indicator" aria-hidden="true">{getSortIcon(field)}</span>
-      </button>
-    </th>
-  );
-
   const headerControls = (
     <div className="table-header-controls">
       <CategoryFilter
@@ -58,21 +40,21 @@ function EarthquakeTable({
         totalCount={totalCount}
       />
       {onRetry && (
-        <button
-          type="button"
-          className="btn btn-secondary btn-sm"
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={onRetry}
           disabled={isLoading}
           title="Reload USGS feed"
         >
           {isLoading ? 'Fetching...' : '↻ Refresh'}
-        </button>
+        </Button>
       )}
     </div>
   );
 
   return (
-    <WidgetCard
+    <Card
       title="Recent earthquake events"
       description={`Real-time seismic activity feed from USGS API (showing ${events.length} of ${totalCount} events, min M ${minMagnitude.toFixed(1)}).`}
       headerActions={headerControls}
@@ -94,49 +76,40 @@ function EarthquakeTable({
 
       {!isLoading && !error && totalCount > 0 && (
         <div className="table-responsive">
-          <table className="events-table">
-            <thead>
+          <Table
+            columns={TABLE_COLUMNS}
+            sortConfig={sortConfig}
+            onSort={onSort}
+            ariaLabel="Earthquake events list"
+          >
+            {events.length > 0 ? (
+              events.map((event) => (
+                <EarthquakeRow
+                  key={event.id}
+                  event={event}
+                  depthUnit={depthUnit}
+                />
+              ))
+            ) : (
               <tr>
-                <th className="th-fav-col" aria-label="Favorite status">★</th>
-                {renderSortableHeader('magnitude', 'Magnitude')}
-                {renderSortableHeader('place', 'Location')}
-                {renderSortableHeader('time', 'Time (UTC)')}
-                {renderSortableHeader('depth', 'Depth')}
-                {renderSortableHeader('region', 'Region')}
-                {renderSortableHeader('significance', 'Impact')}
-                <th>Actions</th>
+                <td colSpan="8" className="no-data">
+                  <div className="table-no-data-content">
+                    <p>No earthquakes match the current filters.</p>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={resetFilters}
+                    >
+                      Reset filters
+                    </Button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {events.length > 0 ? (
-                events.map((event) => (
-                  <EarthquakeRow
-                    key={event.id}
-                    event={event}
-                    depthUnit={depthUnit}
-                  />
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="no-data">
-                    <div className="table-no-data-content">
-                      <p>No earthquakes match the current filters.</p>
-                      <button
-                        type="button"
-                        className="btn btn-secondary btn-sm"
-                        onClick={resetFilters}
-                      >
-                        Reset filters
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            )}
+          </Table>
         </div>
       )}
-    </WidgetCard>
+    </Card>
   );
 }
 

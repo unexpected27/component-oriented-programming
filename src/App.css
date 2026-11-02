@@ -1,47 +1,27 @@
-:root {
-  --bg-primary: #f6f8fa;
-  --bg-card: #ffffff;
-  --border-default: #d0d7de;
-  --text-primary: #1f2328;
-  --text-secondary: #656d76;
-  --accent-primary: #0969da;
-  --accent-hover: #085bc4;
-  --accent-light: #ddf4ff;
-  --success: #1a7f37;
-  --success-bg: #dafbe1;
-  --warning: #9a6700;
-  --warning-bg: #fff8c5;
-  --danger: #cf222e;
-  --danger-bg: #ffebe9;
-  --radius-md: 6px;
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --color-weak: #0969da;
-  --color-light: #d97706;
-  --color-moderate: #c2410c;
-  --color-strong: #cf222e;
-  --track-bg: #eaeef2;
-}
+@import './design-system/tokens.css';
 
-[data-theme='dark'] {
-  --bg-primary: #0d1117;
-  --bg-card: #161b22;
-  --border-default: #30363d;
-  --text-primary: #f0f6fc;
-  --text-secondary: #8b949e;
-  --accent-primary: #2f81f7;
-  --accent-hover: #388bfd;
-  --accent-light: rgba(56, 139, 253, 0.15);
-  --success: #3fb950;
-  --success-bg: rgba(63, 185, 80, 0.15);
-  --warning: #d29922;
-  --warning-bg: rgba(210, 153, 34, 0.15);
-  --danger: #f85149;
-  --danger-bg: rgba(248, 81, 73, 0.15);
-  --color-weak: #388bfd;
-  --color-light: #d29922;
-  --color-moderate: #db6d28;
-  --color-strong: #f85149;
-  --track-bg: #21262d;
+:root {
+  --bg-primary: var(--ds-color-bg-primary);
+  --bg-card: var(--ds-color-bg-card);
+  --border-default: var(--ds-color-border-default);
+  --text-primary: var(--ds-color-text-primary);
+  --text-secondary: var(--ds-color-text-secondary);
+  --accent-primary: var(--ds-color-primary);
+  --accent-hover: var(--ds-color-primary-hover);
+  --accent-light: var(--ds-color-primary-light);
+  --success: var(--ds-color-success);
+  --success-bg: var(--ds-color-success-bg);
+  --warning: var(--ds-color-warning);
+  --warning-bg: var(--ds-color-warning-bg);
+  --danger: var(--ds-color-danger);
+  --danger-bg: var(--ds-color-danger-bg);
+  --radius-md: var(--ds-radius-md);
+  --font-sans: var(--ds-font-family-sans);
+  --color-weak: var(--ds-color-mag-weak);
+  --color-light: var(--ds-color-mag-light);
+  --color-moderate: var(--ds-color-mag-moderate);
+  --color-strong: var(--ds-color-mag-strong);
+  --track-bg: var(--ds-color-bg-muted);
 }
 
 * {

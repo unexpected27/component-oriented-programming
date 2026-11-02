@@ -1,6 +1,8 @@
 import { Link, NavLink } from 'react-router';
 import useTheme from '../../hooks/useTheme';
 import useFavorites from '../../hooks/useFavorites';
+import Button from './atoms/Button/Button';
+import Badge from './atoms/Badge/Badge';
 
 function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -36,15 +38,17 @@ function Navbar() {
             aria-label={`${favoritesCount} earthquake${favoritesCount === 1 ? '' : 's'} in favorites`}
           >
             <span className="navbar-fav-star" aria-hidden="true">★</span>
-            <span className="navbar-fav-count">{favoritesCount}</span>
+            <Badge variant="primary" size="sm" shape="pill">
+              {favoritesCount}
+            </Badge>
             <span className="navbar-fav-text">Favorites</span>
           </div>
 
-          <button
-            type="button"
-            className="theme-toggle-btn"
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={toggleTheme}
-            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+            ariaLabel={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
             title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
           >
             <span className="theme-icon" aria-hidden="true">
@@ -53,7 +57,7 @@ function Navbar() {
             <span className="theme-label">
               {theme === 'light' ? 'Dark' : 'Light'}
             </span>
-          </button>
+          </Button>
         </div>
       </div>
     </header>

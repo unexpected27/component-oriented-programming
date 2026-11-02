@@ -1,5 +1,6 @@
 import { useNavigate, Link } from 'react-router';
 import MagnitudeBadge from '../ui/MagnitudeBadge';
+import Badge from '../ui/atoms/Badge/Badge';
 import useFavorites from '../../hooks/useFavorites';
 
 function EarthquakeRow({ event, depthUnit = 'km' }) {
@@ -55,17 +56,23 @@ function EarthquakeRow({ event, depthUnit = 'km' }) {
       <td className="cell-time">{event.formattedTime || event.time}</td>
       <td>{formatDepth(event.depth)}</td>
       <td>
-        <span className="region-tag">{event.region}</span>
+        <Badge variant="neutral" size="sm">
+          {event.region}
+        </Badge>
       </td>
       <td>
-        <span className="significance-tag" title={`Significance score: ${event.significance}`}>
+        <Badge
+          variant={event.significance > 500 ? 'danger' : 'neutral'}
+          size="sm"
+          title={`Significance score: ${event.significance}`}
+        >
           Sig {event.significance}
-        </span>
+        </Badge>
       </td>
       <td>
         <Link
           to={`/event/${event.id}`}
-          className="btn btn-secondary btn-sm"
+          className="ds-button ds-button-secondary ds-button-sm"
           onClick={(e) => e.stopPropagation()}
         >
           Details ↗

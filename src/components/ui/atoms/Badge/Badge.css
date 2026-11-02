@@ -1,0 +1,84 @@
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ds-font-family-sans);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-tight);
+  white-space: nowrap;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+}
+
+.ds-badge-sm {
+  font-size: var(--ds-font-size-xs);
+  padding: var(--ds-space-1) var(--ds-space-2);
+}
+
+.ds-badge-md {
+  font-size: var(--ds-font-size-sm);
+  padding: 4px 10px;
+}
+
+.ds-badge-rounded {
+  border-radius: var(--ds-radius-sm);
+}
+
+.ds-badge-pill {
+  border-radius: var(--ds-radius-full);
+}
+
+.ds-badge-default,
+.ds-badge-neutral {
+  background-color: var(--ds-color-bg-muted);
+  color: var(--ds-color-text-secondary);
+  border-color: var(--ds-color-border-default);
+}
+
+.ds-badge-primary {
+  background-color: var(--ds-color-primary-light);
+  color: var(--ds-color-primary);
+  border-color: var(--ds-color-border-focus);
+}
+
+.ds-badge-success {
+  background-color: var(--ds-color-success-bg);
+  color: var(--ds-color-success);
+  border-color: var(--ds-color-success-border);
+}
+
+.ds-badge-warning {
+  background-color: var(--ds-color-warning-bg);
+  color: var(--ds-color-warning);
+  border-color: var(--ds-color-warning-border);
+}
+
+.ds-badge-danger {
+  background-color: var(--ds-color-danger-bg);
+  color: var(--ds-color-danger);
+  border-color: var(--ds-color-danger-border);
+}
+
+.ds-badge-weak {
+  background-color: rgba(9, 105, 218, 0.12);
+  color: var(--ds-color-mag-weak);
+  border-color: rgba(9, 105, 218, 0.3);
+}
+
+.ds-badge-light {
+  background-color: rgba(217, 119, 6, 0.12);
+  color: var(--ds-color-mag-light);
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+.ds-badge-moderate {
+  background-color: rgba(194, 65, 12, 0.12);
+  color: var(--ds-color-mag-moderate);
+  border-color: rgba(194, 65, 12, 0.3);
+}
+
+.ds-badge-strong {
+  background-color: rgba(207, 34, 46, 0.12);
+  color: var(--ds-color-mag-strong);
+  border-color: rgba(207, 34, 46, 0.3);
+}

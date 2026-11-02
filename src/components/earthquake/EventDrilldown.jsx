@@ -1,3 +1,7 @@
+import Card from '../ui/atoms/Card/Card';
+import Button from '../ui/atoms/Button/Button';
+import Badge from '../ui/atoms/Badge/Badge';
+
 function EventDrilldown({ event, depthUnit, onClose }) {
   if (!event) return null;
 
@@ -8,19 +12,25 @@ function EventDrilldown({ event, depthUnit, onClose }) {
     return `${depthKm.toFixed(1)} km`;
   };
 
+  const closeButton = (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={onClose}
+      ariaLabel="Close drilldown panel"
+      title="Close details"
+    >
+      ✕
+    </Button>
+  );
+
   return (
-    <div className="drilldown-panel">
-      <div className="drilldown-header">
-        <h4>Event drilldown: {event.place}</h4>
-        <button
-          type="button"
-          className="btn-close-drilldown"
-          onClick={onClose}
-          aria-label="Close details"
-        >
-          ✕
-        </button>
-      </div>
+    <Card
+      title={`Event drilldown: ${event.place}`}
+      headerActions={closeButton}
+      className="drilldown-panel"
+      variant="elevated"
+    >
       <div className="drilldown-grid">
         <div className="drilldown-item">
           <span className="drilldown-label">Coordinates</span>
@@ -42,8 +52,12 @@ function EventDrilldown({ event, depthUnit, onClose }) {
         </div>
         <div className="drilldown-item">
           <span className="drilldown-label">Tsunami alert</span>
-          <span className={`drilldown-value ${event.tsunami ? 'tsunami-alert' : ''}`}>
-            {event.tsunami ? 'YES (High Risk)' : 'NO'}
+          <span className="drilldown-value">
+            {event.tsunami ? (
+              <Badge variant="danger" size="sm">YES (High Risk)</Badge>
+            ) : (
+              <Badge variant="neutral" size="sm">NO</Badge>
+            )}
           </span>
         </div>
         <div className="drilldown-item">
@@ -52,7 +66,9 @@ function EventDrilldown({ event, depthUnit, onClose }) {
         </div>
         <div className="drilldown-item">
           <span className="drilldown-label">Processing status</span>
-          <span className="drilldown-value status-badge-item">{event.status}</span>
+          <span className="drilldown-value">
+            <Badge variant="primary" size="sm">{event.status}</Badge>
+          </span>
         </div>
         <div className="drilldown-item">
           <span className="drilldown-label">Official USGS Page</span>
@@ -66,7 +82,7 @@ function EventDrilldown({ event, depthUnit, onClose }) {
           </a>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 

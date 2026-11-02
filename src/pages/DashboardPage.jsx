@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
-import KpiCard from '../components/ui/KpiCard';
+import KpiCard from '../components/ui/molecules/KpiCard/KpiCard';
+import Badge from '../components/ui/atoms/Badge/Badge';
+import Card from '../components/ui/atoms/Card/Card';
+import Toggle from '../components/ui/atoms/Toggle/Toggle';
 import Counter from '../components/ui/Counter';
-import Toggle from '../components/ui/Toggle';
-import WidgetCard from '../components/ui/WidgetCard';
 import MagnitudeChart from '../components/earthquake/MagnitudeChart';
 import EarthquakeFilterBar from '../components/earthquake/EarthquakeFilterBar';
 import EarthquakeTable from '../components/earthquake/EarthquakeTable';
@@ -117,9 +118,9 @@ function DashboardPage() {
           <p className="page-subtitle">Real-time earthquake monitoring, filtering, and risk analytics via USGS</p>
         </div>
         <div className="header-status">
-          {loading && <span className="status-badge-live status-badge-loading">Fetching USGS...</span>}
-          {!loading && !error && <span className="status-badge-live">Live USGS Feed</span>}
-          {!loading && error && <span className="status-badge-live status-badge-error">Feed Offline</span>}
+          {loading && <Badge variant="primary" size="md" shape="pill">Fetching USGS...</Badge>}
+          {!loading && !error && <Badge variant="success" size="md" shape="pill">Live USGS Feed</Badge>}
+          {!loading && error && <Badge variant="danger" size="md" shape="pill">Feed Offline</Badge>}
         </div>
       </header>
 
@@ -153,7 +154,7 @@ function DashboardPage() {
           onChange={setThreshold}
         />
 
-        <WidgetCard
+        <Card
           title="Display settings"
           description="Customize measurement units for depth and distance."
         >
@@ -169,7 +170,7 @@ function DashboardPage() {
               ]}
             />
           </div>
-        </WidgetCard>
+        </Card>
       </section>
 
       <section className="visualization-section" aria-label="Distribution chart">

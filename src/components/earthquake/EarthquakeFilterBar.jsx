@@ -1,6 +1,41 @@
 import useFilters from '../../hooks/useFilters';
 import useFavorites from '../../hooks/useFavorites';
-import WidgetCard from '../ui/WidgetCard';
+import Card from '../ui/atoms/Card/Card';
+import Badge from '../ui/atoms/Badge/Badge';
+import Button from '../ui/atoms/Button/Button';
+import Input from '../ui/atoms/Input/Input';
+import Select from '../ui/atoms/Select/Select';
+import FormField from '../ui/molecules/FormField/FormField';
+
+const MIN_MAG_OPTIONS = [
+  { value: '0', label: 'All magnitudes (0+)' },
+  { value: '1.0', label: 'M 1.0+ (Micro)' },
+  { value: '2.5', label: 'M 2.5+ (Minor / Felt)' },
+  { value: '4.5', label: 'M 4.5+ (Moderate)' },
+  { value: '6.0', label: 'M 6.0+ (Strong)' }
+];
+
+const CATEGORY_OPTIONS = [
+  { value: 'all', label: 'All categories' },
+  { value: 'weak', label: 'Weak (< 3.5)' },
+  { value: 'light', label: 'Light (3.5 – 4.9)' },
+  { value: 'moderate', label: 'Moderate (5.0 – 6.4)' },
+  { value: 'strong', label: 'Strong (6.5+)' }
+];
+
+const ORDER_BY_OPTIONS = [
+  { value: 'time', label: 'Newest first' },
+  { value: 'time-asc', label: 'Oldest first' },
+  { value: 'magnitude', label: 'Highest magnitude' },
+  { value: 'magnitude-asc', label: 'Lowest magnitude' }
+];
+
+const LIMIT_OPTIONS = [
+  { value: '25', label: '25 events' },
+  { value: '50', label: '50 events' },
+  { value: '100', label: '100 events' },
+  { value: '200', label: '200 events' }
+];
 
 function EarthquakeFilterBar({
   isLoading = false,
@@ -20,15 +55,15 @@ function EarthquakeFilterBar({
 
   const headerActions = (
     <div className="filter-bar-header-meta">
-      <span className="filter-count-badge">
+      <Badge variant="neutral" size="sm" shape="pill">
         {filteredCount} of {totalCount} events
-      </span>
+      </Badge>
       {isLoading && <span className="filter-loading-dot" aria-label="Loading query updates" />}
     </div>
   );
 
   return (
-    <WidgetCard
+    <Card
       title="Filter and query panel"
       description="Refine earthquake data by location keyword, minimum magnitude, classification category, ordering, and event count."
       headerActions={headerActions}
@@ -36,127 +71,92 @@ function EarthquakeFilterBar({
       <form className="filter-form" onSubmit={(e) => e.preventDefault()}>
         <div className="filter-row">
           <div className="filter-field filter-field-search">
-            <label htmlFor="filter-search-input" className="field-label">
-              Search location
-            </label>
-            <div className="search-box-wrapper">
-              <input
+            <FormField label="Search location" htmlFor="filter-search-input">
+              <Input
                 id="filter-search-input"
+                name="searchQuery"
                 type="text"
-                className="filter-text-input"
                 placeholder="Search place or region (e.g. California, Japan, Alaska)..."
                 value={filters.searchQuery}
                 onChange={handleTextChange}
+                onClear={handleClearSearch}
                 autoComplete="off"
               />
-              {filters.searchQuery && (
-                <button
-                  type="button"
-                  className="search-clear-btn"
-                  onClick={handleClearSearch}
-                  aria-label="Clear search input"
-                  title="Clear search"
-                >
-                  ×
-                </button>
-              )}
-            </div>
+            </FormField>
           </div>
 
           <div className="filter-field">
-            <label htmlFor="filter-min-mag" className="field-label">
-              Min magnitude
-            </label>
-            <select
-              id="filter-min-mag"
-              className="filter-select-input"
-              value={filters.minMagnitude}
-              onChange={(e) => updateFilter('minMagnitude', e.target.value)}
-            >
-              <option value="0">All magnitudes (0+)</option>
-              <option value="1.0">M 1.0+ (Micro)</option>
-              <option value="2.5">M 2.5+ (Minor / Felt)</option>
-              <option value="4.5">M 4.5+ (Moderate)</option>
-              <option value="6.0">M 6.0+ (Strong)</option>
-            </select>
+            <FormField label="Min magnitude" htmlFor="filter-min-mag">
+              <Select
+                id="filter-min-mag"
+                name="minMagnitude"
+                value={filters.minMagnitude}
+                onChange={(e) => updateFilter('minMagnitude', e.target.value)}
+                options={MIN_MAG_OPTIONS}
+              />
+            </FormField>
           </div>
 
           <div className="filter-field">
-            <label htmlFor="filter-category" className="field-label">
-              Category
-            </label>
-            <select
-              id="filter-category"
-              className="filter-select-input"
-              value={filters.category}
-              onChange={(e) => updateFilter('category', e.target.value)}
-            >
-              <option value="all">All categories</option>
-              <option value="weak">Weak (&lt; 3.5)</option>
-              <option value="light">Light (3.5 – 4.9)</option>
-              <option value="moderate">Moderate (5.0 – 6.4)</option>
-              <option value="strong">Strong (6.5+)</option>
-            </select>
+            <FormField label="Category" htmlFor="filter-category">
+              <Select
+                id="filter-category"
+                name="category"
+                value={filters.category}
+                onChange={(e) => updateFilter('category', e.target.value)}
+                options={CATEGORY_OPTIONS}
+              />
+            </FormField>
           </div>
 
           <div className="filter-field">
-            <label htmlFor="filter-order-by" className="field-label">
-              Sort by
-            </label>
-            <select
-              id="filter-order-by"
-              className="filter-select-input"
-              value={filters.orderBy}
-              onChange={(e) => updateFilter('orderBy', e.target.value)}
-            >
-              <option value="time">Newest first</option>
-              <option value="time-asc">Oldest first</option>
-              <option value="magnitude">Highest magnitude</option>
-              <option value="magnitude-asc">Lowest magnitude</option>
-            </select>
+            <FormField label="Sort by" htmlFor="filter-order-by">
+              <Select
+                id="filter-order-by"
+                name="orderBy"
+                value={filters.orderBy}
+                onChange={(e) => updateFilter('orderBy', e.target.value)}
+                options={ORDER_BY_OPTIONS}
+              />
+            </FormField>
           </div>
 
           <div className="filter-field">
-            <label htmlFor="filter-limit" className="field-label">
-              Limit
-            </label>
-            <select
-              id="filter-limit"
-              className="filter-select-input"
-              value={filters.limit}
-              onChange={(e) => updateFilter('limit', e.target.value)}
-            >
-              <option value="25">25 events</option>
-              <option value="50">50 events</option>
-              <option value="100">100 events</option>
-              <option value="200">200 events</option>
-            </select>
+            <FormField label="Limit" htmlFor="filter-limit">
+              <Select
+                id="filter-limit"
+                name="limit"
+                value={filters.limit}
+                onChange={(e) => updateFilter('limit', e.target.value)}
+                options={LIMIT_OPTIONS}
+              />
+            </FormField>
           </div>
 
           <div className="filter-actions-group">
-            <button
-              type="button"
-              className={`btn-fav-filter ${filters.onlyFavorites ? 'active' : ''}`}
+            <Button
+              variant={filters.onlyFavorites ? 'primary' : 'secondary'}
+              size="md"
               onClick={() => updateFilter('onlyFavorites', !filters.onlyFavorites)}
               title="Filter to show only favorited earthquakes"
             >
               <span aria-hidden="true">{filters.onlyFavorites ? '★' : '☆'}</span>
               <span>Favorites only ({favoritesCount})</span>
-            </button>
+            </Button>
 
-            <button
-              type="button"
-              className="btn btn-secondary btn-reset-filters"
+            <Button
+              variant="secondary"
+              size="md"
               onClick={resetFilters}
               disabled={!isFiltered}
               title={isFiltered ? 'Reset all filters to defaults' : 'Filters are already at default'}
             >
               ↺ Reset filters
-            </button>
+            </Button>
           </div>
         </div>
       </form>
-    </WidgetCard>
+    </Card>
   );
 }
 

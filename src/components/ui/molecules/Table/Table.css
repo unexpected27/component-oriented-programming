@@ -1,0 +1,80 @@
+.ds-table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--ds-color-border-default);
+  border-radius: var(--ds-radius-md);
+  background-color: var(--ds-color-bg-card);
+  box-sizing: border-box;
+}
+
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: var(--ds-font-family-sans);
+  font-size: var(--ds-font-size-sm);
+  color: var(--ds-color-text-primary);
+}
+
+.ds-table-head {
+  background-color: var(--ds-color-bg-subtle);
+  border-bottom: 1px solid var(--ds-color-border-default);
+}
+
+.ds-table-th {
+  padding: var(--ds-space-3) var(--ds-space-4);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-color-text-secondary);
+  font-size: var(--ds-font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.ds-table-th-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.ds-table-sort-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+.ds-table-sort-btn:hover {
+  color: var(--ds-color-text-primary);
+}
+
+.ds-table-sort-indicator {
+  font-size: 10px;
+  color: var(--ds-color-primary);
+}
+
+.ds-table-tbody tr {
+  border-bottom: 1px solid var(--ds-color-border-subtle);
+  transition: background-color var(--ds-transition-fast);
+}
+
+.ds-table-tbody tr:last-child {
+  border-bottom: none;
+}
+
+.ds-table-tbody tr:hover {
+  background-color: var(--ds-color-bg-subtle);
+}
+
+.ds-table-td {
+  padding: var(--ds-space-3) var(--ds-space-4);
+  vertical-align: middle;
+}

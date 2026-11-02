@@ -1,0 +1,57 @@
+.ds-kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+}
+
+.ds-kpi-title {
+  font-family: var(--ds-font-family-sans);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ds-kpi-body {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-space-2);
+}
+
+.ds-kpi-value {
+  font-family: var(--ds-font-family-sans);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--ds-color-text-primary);
+  line-height: var(--ds-line-height-tight);
+}
+
+.ds-kpi-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--ds-font-family-sans);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  padding: 2px 6px;
+  border-radius: var(--ds-radius-sm);
+}
+
+.ds-kpi-change-positive {
+  background-color: var(--ds-color-success-bg);
+  color: var(--ds-color-success);
+}
+
+.ds-kpi-change-negative {
+  background-color: var(--ds-color-danger-bg);
+  color: var(--ds-color-danger);
+}
+
+.ds-kpi-description {
+  font-family: var(--ds-font-family-sans);
+  font-size: var(--ds-font-size-xs);
+  color: var(--ds-color-text-secondary);
+  line-height: var(--ds-line-height-normal);
+}

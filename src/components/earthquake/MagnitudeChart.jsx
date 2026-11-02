@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import WidgetCard from '../ui/WidgetCard';
+import Card from '../ui/atoms/Card/Card';
 import ChartTypeSelector from './ChartTypeSelector';
 import MagnitudeChartVisualizer from './MagnitudeChartVisualizer';
 import useChartSettings from '../../hooks/useChartSettings';
+import { MAGNITUDE_BRACKET_COLORS } from '../../design-system/tokens';
 
 const BRACKETS = [
   {
@@ -10,28 +11,28 @@ const BRACKETS = [
     shortLabel: 'Weak (<3.5)',
     min: 0,
     max: 3.5,
-    color: '#0969da'
+    color: MAGNITUDE_BRACKET_COLORS.weak
   },
   {
     category: 'Light (3.5 – 4.9)',
     shortLabel: 'Light (3.5–4.9)',
     min: 3.5,
     max: 5.0,
-    color: '#d97706'
+    color: MAGNITUDE_BRACKET_COLORS.light
   },
   {
     category: 'Moderate (5.0 – 6.4)',
     shortLabel: 'Moderate (5.0–6.4)',
     min: 5.0,
     max: 6.5,
-    color: '#c2410c'
+    color: MAGNITUDE_BRACKET_COLORS.moderate
   },
   {
     category: 'Strong (6.5+)',
     shortLabel: 'Strong (6.5+)',
     min: 6.5,
     max: 10.0,
-    color: '#cf222e'
+    color: MAGNITUDE_BRACKET_COLORS.strong
   }
 ];
 
@@ -74,7 +75,7 @@ function MagnitudeChart({ events = [], chartType: propChartType, onTypeChange })
   );
 
   return (
-    <WidgetCard
+    <Card
       title="Earthquake distribution by magnitude"
       description={`Interactive visual distribution of ${totalEvents} seismic events filtered by magnitude brackets.`}
       headerActions={headerControls}
@@ -95,7 +96,7 @@ function MagnitudeChart({ events = [], chartType: propChartType, onTypeChange })
           ))}
         </div>
       </div>
-    </WidgetCard>
+    </Card>
   );
 }
 

@@ -1,0 +1,56 @@
+.ds-state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--ds-space-8) var(--ds-space-4);
+  background-color: var(--ds-color-bg-card);
+  border: 1px dashed var(--ds-color-border-default);
+  border-radius: var(--ds-radius-md);
+  gap: var(--ds-space-2);
+  box-sizing: border-box;
+}
+
+.ds-state-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--ds-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-bold);
+  margin-bottom: var(--ds-space-2);
+}
+
+.ds-state-icon-empty {
+  background-color: var(--ds-color-bg-muted);
+  color: var(--ds-color-text-secondary);
+}
+
+.ds-state-icon-error {
+  background-color: var(--ds-color-danger-bg);
+  color: var(--ds-color-danger);
+}
+
+.ds-state-title {
+  margin: 0;
+  font-family: var(--ds-font-family-sans);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-color-text-primary);
+}
+
+.ds-state-message {
+  margin: 0;
+  max-width: 420px;
+  font-family: var(--ds-font-family-sans);
+  font-size: var(--ds-font-size-sm);
+  color: var(--ds-color-text-secondary);
+  line-height: var(--ds-line-height-normal);
+}
+
+.ds-state-action {
+  margin-top: var(--ds-space-3);
+}

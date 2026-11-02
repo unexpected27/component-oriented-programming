@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router';
 import MagnitudeBadge from '../components/ui/MagnitudeBadge';
-import LoadingState from '../components/ui/LoadingState';
-import ErrorState from '../components/ui/ErrorState';
-import Toggle from '../components/ui/Toggle';
-import WidgetCard from '../components/ui/WidgetCard';
+import Badge from '../components/ui/atoms/Badge/Badge';
+import Button from '../components/ui/atoms/Button/Button';
+import Card from '../components/ui/atoms/Card/Card';
+import Toggle from '../components/ui/atoms/Toggle/Toggle';
+import LoadingState from '../components/ui/molecules/LoadingState/LoadingState';
+import ErrorState from '../components/ui/molecules/ErrorState/ErrorState';
 import useFetch from '../hooks/useFetch';
 import useFavorites from '../hooks/useFavorites';
 import { normalizeDetailFeature } from '../services/earthquakeService';
@@ -38,13 +40,13 @@ function EventDetailsPage() {
     return (
       <div className="details-page-wrapper">
         <div className="details-nav-bar">
-          <Link to="/" className="btn btn-secondary btn-sm">
+          <Link to="/" className="ds-button ds-button-secondary ds-button-sm">
             ← Back to Dashboard
           </Link>
         </div>
-        <WidgetCard title="Loading event details...">
+        <Card title="Loading event details...">
           <LoadingState message="Querying USGS event repository..." />
-        </WidgetCard>
+        </Card>
       </div>
     );
   }
@@ -55,7 +57,7 @@ function EventDetailsPage() {
     return (
       <div className="details-page-wrapper">
         <div className="details-nav-bar">
-          <Link to="/" className="btn btn-secondary btn-sm">
+          <Link to="/" className="ds-button ds-button-secondary ds-button-sm">
             ← Back to Dashboard
           </Link>
         </div>
@@ -68,15 +70,15 @@ function EventDetailsPage() {
               No seismic event matching ID <code>{id}</code> exists in the USGS database. It may have been a temporary test record, an unconfirmed tremor, or the ID was mistyped.
             </p>
             <div className="not-found-actions">
-              <Link to="/" className="btn btn-primary">
+              <Link to="/" className="ds-button ds-button-primary ds-button-md">
                 Return to Dashboard
               </Link>
             </div>
           </div>
         ) : (
-          <WidgetCard title="Error loading event">
+          <Card title="Error loading event">
             <ErrorState error={error} onRetry={refetch} />
-          </WidgetCard>
+          </Card>
         )}
       </div>
     );
@@ -96,7 +98,7 @@ function EventDetailsPage() {
           <span className="breadcrumb-separator" aria-hidden="true">/</span>
           <span className="breadcrumb-current">Event {event.id}</span>
         </nav>
-        <Link to="/" className="btn btn-secondary btn-sm">
+        <Link to="/" className="ds-button ds-button-secondary ds-button-sm">
           ← Back to Dashboard
         </Link>
       </div>
@@ -106,19 +108,19 @@ function EventDetailsPage() {
           <div className="details-title-group">
             <div className="details-badge-row">
               <MagnitudeBadge magnitude={event.magnitude} />
-              <span className="details-tag details-tag-type">{event.type.toUpperCase()}</span>
-              <span className={`details-tag details-tag-status ${event.status === 'reviewed' ? 'status-reviewed' : ''}`}>
+              <Badge variant="neutral" size="sm">{event.type.toUpperCase()}</Badge>
+              <Badge variant={event.status === 'reviewed' ? 'primary' : 'neutral'} size="sm">
                 {event.status.toUpperCase()}
-              </span>
+              </Badge>
               {event.alert && (
-                <span className={`details-tag details-tag-alert alert-${event.alert}`}>
+                <Badge variant="warning" size="sm">
                   ALERT {event.alert.toUpperCase()}
-                </span>
+                </Badge>
               )}
               {event.tsunami === 1 && (
-                <span className="details-tag details-tag-tsunami">
+                <Badge variant="danger" size="sm">
                   TSUNAMI WARNING
-                </span>
+                </Badge>
               )}
             </div>
             <h1 className="details-hero-title">{event.place}</h1>
@@ -128,16 +130,16 @@ function EventDetailsPage() {
           </div>
 
           <div className="details-hero-controls">
-            <button
-              type="button"
-              className={`btn ${isFav ? 'btn-favorite-active' : 'btn-secondary'} btn-favorite-detail`}
+            <Button
+              variant={isFav ? 'primary' : 'secondary'}
+              size="md"
               onClick={() => toggleFavorite(event.id)}
-              aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+              ariaLabel={isFav ? 'Remove from favorites' : 'Add to favorites'}
               title={isFav ? 'Remove from favorites' : 'Save to favorites'}
             >
               <span className="fav-star-icon" aria-hidden="true">{isFav ? '★' : '☆'}</span>
               <span>{isFav ? 'Favorited' : 'Add to favorites'}</span>
-            </button>
+            </Button>
             <Toggle
               label="Depth unit"
               ariaLabel="Select depth unit"
@@ -153,7 +155,7 @@ function EventDetailsPage() {
       </header>
 
       <div className="details-grid-layout">
-        <WidgetCard
+        <Card
           title="Geographical epicenter"
           description="Spatial location, coordinates, hypocenter depth, and satellite positioning."
         >
@@ -186,9 +188,9 @@ function EventDetailsPage() {
               </a>
             </div>
           </div>
-        </WidgetCard>
+        </Card>
 
-        <WidgetCard
+        <Card
           title="Seismic wave mechanics"
           description="Calculated wave parameters, seismic station coverage, and estimation precision."
         >
@@ -218,9 +220,9 @@ function EventDetailsPage() {
               <span className="metric-val">{event.type}</span>
             </div>
           </div>
-        </WidgetCard>
+        </Card>
 
-        <WidgetCard
+        <Card
           title="Impact & community reports"
           description="Observed ground shaking, community responses, and intensity ratings."
         >
@@ -252,9 +254,9 @@ function EventDetailsPage() {
               <span className="metric-val">{event.alert ? event.alert.toUpperCase() : 'None'}</span>
             </div>
           </div>
-        </WidgetCard>
+        </Card>
 
-        <WidgetCard
+        <Card
           title="Data source & audit"
           description="USGS network identification, verification pipeline, and timestamps."
         >
@@ -291,7 +293,7 @@ function EventDetailsPage() {
               </a>
             </div>
           </div>
-        </WidgetCard>
+        </Card>
       </div>
     </div>
   );

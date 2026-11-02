@@ -1,19 +1,24 @@
+import Select from '../ui/atoms/Select/Select';
+
 function CategoryFilter({ value, onChange, totalCount }) {
+  const options = [
+    { value: 'all', label: `All (${totalCount})` },
+    { value: 'weak', label: 'Weak (< 3.5)' },
+    { value: 'light', label: 'Light (3.5 – 4.9)' },
+    { value: 'moderate', label: 'Moderate (5.0 – 6.4)' },
+    { value: 'strong', label: 'Strong (6.5+)' }
+  ];
+
   return (
     <div className="filter-controls">
       <label htmlFor="category-select" className="filter-label">Category:</label>
-      <select
+      <Select
         id="category-select"
-        className="filter-select"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-      >
-        <option value="all">All ({totalCount})</option>
-        <option value="weak">Weak (&lt; 3.5)</option>
-        <option value="light">Light (3.5 – 4.9)</option>
-        <option value="moderate">Moderate (5.0 – 6.4)</option>
-        <option value="strong">Strong (6.5+)</option>
-      </select>
+        options={options}
+        size="sm"
+      />
     </div>
   );
 }

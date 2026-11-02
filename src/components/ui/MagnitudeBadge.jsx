@@ -1,9 +1,11 @@
-function MagnitudeBadge({ magnitude, prefix = 'M ' }) {
-  const getBadgeClass = (val) => {
-    if (val >= 6.5) return 'badge badge-strong';
-    if (val >= 5.0) return 'badge badge-moderate';
-    if (val >= 3.5) return 'badge badge-light';
-    return 'badge badge-weak';
+import Badge from './atoms/Badge/Badge';
+
+function MagnitudeBadge({ magnitude, prefix = 'M ', size = 'md' }) {
+  const getBadgeVariant = (val) => {
+    if (val >= 6.5) return 'strong';
+    if (val >= 5.0) return 'moderate';
+    if (val >= 3.5) return 'light';
+    return 'weak';
   };
 
   const getLabel = (val) => {
@@ -14,9 +16,13 @@ function MagnitudeBadge({ magnitude, prefix = 'M ' }) {
   };
 
   return (
-    <span className={getBadgeClass(magnitude)} title={`Level: ${getLabel(magnitude)}`}>
+    <Badge
+      variant={getBadgeVariant(magnitude)}
+      size={size}
+      title={`Level: ${getLabel(magnitude)}`}
+    >
       {prefix}{magnitude.toFixed(1)}
-    </span>
+    </Badge>
   );
 }
 
